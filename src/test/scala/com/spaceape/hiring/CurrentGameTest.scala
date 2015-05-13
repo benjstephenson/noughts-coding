@@ -20,7 +20,10 @@ class CurrentGameTest extends JUnitSuite with Matchers {
   val baseUrl = "http://localhost:8080/game"
 
 	@Test
-	def CheckPlayerCantMakeConsecutiveMoves {
-    new CurrentGame("1", "2").isMoveValid(new Move("1", 0, 0)) should be (false)
+	def checkPlayerCantMakeConsecutiveMoves {
+		var currentGame = new CurrentGame("1", "2")
+    currentGame.applyMove(new Move("1", 0, 0))
+		currentGame.applyMove(new Move("1", 0, 0)) should be (false)
 	}
+
 }

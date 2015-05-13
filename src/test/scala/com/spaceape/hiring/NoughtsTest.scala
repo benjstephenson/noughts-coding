@@ -1,4 +1,3 @@
-
 package com.spaceape.hiring
 
 import javax.ws.rs.core.Response.Status
@@ -47,7 +46,7 @@ class NoughtsTest extends JUnitSuite with Matchers {
         .asString()
 
       if(response.getStatus != Status.ACCEPTED.getStatusCode) {
-        throw new RuntimeException(s"${response.getStatus} when making move: ${response.getBody}")
+        throw new RuntimeException(s"${response.getStatus} when making move: ${response.getBody} does not match expected ${Status.ACCEPTED.getStatusCode}")
       }
     })
   }
@@ -76,3 +75,4 @@ class NoughtsTest extends JUnitSuite with Matchers {
 
 	}
 }
+//  vim: set ts=2 sw=2 tw=0 fdm=marker et :

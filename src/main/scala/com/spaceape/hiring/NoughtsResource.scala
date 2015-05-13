@@ -32,6 +32,7 @@ class NoughtsResource() {
   @PUT
   @Path("/{gameId}")
   def makeMove(@PathParam("gameId") gameId: String, move: Move): Response = {
+		currentGame.get.applyMove(move)
     Response.status(Status.ACCEPTED).build()
   }
 }

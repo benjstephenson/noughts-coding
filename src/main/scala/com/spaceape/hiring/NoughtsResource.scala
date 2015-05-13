@@ -13,18 +13,19 @@ import com.spaceape.hiring.model.{GameState, Move, CurrentGame};
 @Consumes(Array(MediaType.APPLICATION_JSON))
 class NoughtsResource() {
 
+	//eurgh...
+	var currentGame: Option[CurrentGame] = None
 
   @POST
   def createGame(@QueryParam("player1Id") player1: String, @QueryParam("player2Id") player2: String): String = {
-    val currentGame = new CurrentGame(player1, player2)
-    System.out.println(currentGame)
-    "1"
+    currentGame = Some(new CurrentGame(player1, player2))
+		currentGame.get.getId
   }
 
   @GET
   @Path("/{gameId}")
   def getGame(@PathParam("gameId") gameId: String): GameState = {
-    GameState(Some("1"), true)
+    currentGame.get.getState
   }
 
 

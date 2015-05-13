@@ -21,9 +21,6 @@ class CurrentGameTest extends JUnitSuite with Matchers {
 
 	@Test
 	def CheckPlayerCantMakeConsecutiveMoves {
-
-    val game = new CurrentGame("1", "2")
-    game.isMoveValid(new Move("1", 0, 0)) should be (false)
-
+    new CurrentGame("1", "2").isMoveValid(new Move("1", 0, 0)) should be (false)
 	}
 }

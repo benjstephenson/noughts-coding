@@ -35,7 +35,8 @@ class NoughtsTest extends JUnitSuite with Matchers {
       throw new RuntimeException(s"${response.getStatus} when creating game: ${response.getBody}")
     }
 
-    objectMapper.readValue(response.getBody, classOf[String])
+    response.getBody
+    //objectMapper.readValue(response.getBody, classOf[String])
   }
 
   def runMoves(gameId: String, moves: Seq[Move]) = {

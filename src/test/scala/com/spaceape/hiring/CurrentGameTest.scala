@@ -23,7 +23,14 @@ class CurrentGameTest extends JUnitSuite with Matchers {
 	def checkPlayerCantMakeConsecutiveMoves {
 		var currentGame = new CurrentGame("1", "2")
     currentGame.applyMove(new Move("1", 0, 0))
-		currentGame.applyMove(new Move("1", 0, 0)) should be (false)
+		currentGame.applyMove(new Move("1", 0, 1)) should be (false)
+	}
+
+	@Test
+	def checkPlayerCantReuseSquare {
+		var currentGame = new CurrentGame("1", "2")
+    currentGame.applyMove(new Move("1", 0, 0))
+		currentGame.applyMove(new Move("2", 0, 0)) should be (false)
 	}
 
 }

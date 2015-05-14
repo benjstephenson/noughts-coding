@@ -75,5 +75,19 @@ class NoughtsTest extends JUnitSuite with Matchers {
     getState(gameId) should be (GameState(Some("1"), true))
 
 	}
-}
+
+	@Test
+	def testPlayer2Win {
+    val gameId = initGame("1", "2")
+    runMoves(gameId, Seq(
+      Move("1", 0, 0),
+      Move("2", 1, 0),
+      Move("1", 0, 1),
+      Move("2", 1, 1),
+      Move("1", 2, 2),
+      Move("2", 1, 2)))
+
+    getState(gameId) should be (GameState(Some("2"), true))
+
+	}}
 //  vim: set ts=2 sw=2 tw=0 fdm=marker et :

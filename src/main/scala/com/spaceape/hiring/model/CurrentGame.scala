@@ -18,25 +18,38 @@ class CurrentGame(player1: String, player2: String) {
 		List(0, 4, 8), List(2, 4, 6)                                                 //Diags
 	)
 
+
 	def getId: String = { id }
 
-	def getState: GameState = {
 
+	def getState: GameState = {
 		printBoard
 
-		// Get the board layout for player1
+		checkForPlayerWin(player1) match {
+			case Some(player1) => return new GameState(Some(player1), true)
+			case None => checkForPlayerWin(player2) match {
+				case Some(player2) => return new GameState(Some(player2), true)
+				case None => return new GameState(None, false)
+			}
+		}
+	}
+
+	private def checkForPlayerWin(player: String): Option[String] = {
+
+		// Get the board layout for the player
 		var marks = new ListBuffer[Int]()
 		board.flatten.zipWithIndex foreach { case (value, index) =>
-			if (value == player1) marks += index
+			println(s"${value} ${index}")
+			if (value == player) marks += index
 		}
 
-		val player1Result = marks.toList
+		val playerResult = marks.toList
+		println(playerResult)
 
-		if (winningCombos.contains(player1Result)) {
-			new GameState(Some(player1), true)
-		} else {
-			new GameState(Some(player2), true)
-		}
+		if (winningCombos.contains(playerResult))
+			Some(player)
+		else
+			None
 	}
 
 
@@ -54,11 +67,6 @@ class CurrentGame(player1: String, player2: String) {
 		System.out.println(s"${board(0)(0)}, ${board(0)(1)}, ${board(0)(2)}")
 		System.out.println(s"${board(1)(0)}, ${board(1)(1)}, ${board(1)(2)}")
 		System.out.println(s"${board(2)(0)}, ${board(2)(1)}, ${board(2)(2)}")
-	}
-
-
-	private def checkRowWin(row: Int, playerId: String): Boolean = {
-		board(row).forall(_ == playerId)
 	}
 
 

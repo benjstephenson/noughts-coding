@@ -89,5 +89,24 @@ class NoughtsTest extends JUnitSuite with Matchers {
 
     getState(gameId) should be (GameState(Some("2"), true))
 
-	}}
+	}
+
+
+  // Aplayer cant start a game with soomeone the have a game in progress with
+  @Test
+  def testNewGame {
+    Unirest.post(baseUrl)
+      .queryString("player1Id", "1")
+      .queryString("player2Id", "2")
+      .asString()
+
+
+    val response = Unirest.post(baseUrl)
+      .queryString("player1Id", "1")
+      .queryString("player2Id", "2")
+      .asString()
+
+      response.getStatus should be (Status.FORBIDDEN.getStatusCode)
+  }
+}
 //  vim: set ts=2 sw=2 tw=0 fdm=marker et :

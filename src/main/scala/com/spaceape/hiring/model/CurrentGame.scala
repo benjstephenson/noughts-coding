@@ -1,6 +1,7 @@
 // vim: set ts=2 sw=2 tw=78 fdm=marker noet :
 package com.spaceape.hiring.model
 
+import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 class CurrentGame(player1: String, player2: String) {
@@ -11,17 +12,33 @@ class CurrentGame(player1: String, player2: String) {
 	// There's definitely a better way to do this....
 	var board = Array(Array("0", "0", "0"), Array("0", "0", "0"), Array("0", "0", "0"))
 
+	// Pretty brute force way to go about pattern matching win conditions
+	private val winningCombos = List(List(0, 1, 2), List(3, 4, 5), List(6, 7, 8),  //Rows
+		List(0, 3, 6), List(1, 4, 7), List(2, 5, 8),                                 //Cols
+		List(0, 4, 8), List(2, 4, 6)                                                 //Diags
+	)
+
 	def getId: String = { id }
 
 	def getState: GameState = {
-		printBoard
-		if (checkRowWin(0, player1))
-			new GameState(Some(player1), true)
-		else
-			new GameState(Some(player2), true)
 
-		board.
+		printBoard
+
+		// Get the board layout for player1
+		var marks = new ListBuffer[Int]()
+		board.flatten.zipWithIndex foreach { case (value, index) =>
+			if (value == player1) marks += index
+		}
+
+		val player1Result = marks.toList
+
+		if (winningCombos.contains(player1Result)) {
+			new GameState(Some(player1), true)
+		} else {
+			new GameState(Some(player2), true)
+		}
 	}
+
 
 	def applyMove(move: Move): Boolean = {
 		if (isMoveValid(move)) {

@@ -19,11 +19,14 @@ class NoughtsResource() {
   def createGame(@QueryParam("player1Id") player1: String, @QueryParam("player2Id") player2: String): Response = {
 		val game = new Game(player1, player2)
 
+		gameList.foreach { g => println(g.getId) }
+
 		gameList.find { g =>
 			(g.player1 == player1 && g.player2 == player2) ||
 			(g.player1 == player2 && g.player2 == player1)
 		} match {
 			case Some(existing) => {
+				println(s"Found existing game ${existing.player1} ${existing.player2}")
 				Response.status(Status.FORBIDDEN).build
 			}
 			case None => {

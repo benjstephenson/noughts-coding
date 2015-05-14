@@ -11,7 +11,7 @@ import org.scalatest.junit.JUnitSuite
 import org.junit.Test
 import org.junit.ClassRule
 import com.mashape.unirest.http.Unirest
-import org.scalatest.Matchers
+import org.scalatest._
 
 
 object NoughtsTest {
@@ -27,8 +27,8 @@ class NoughtsTest extends JUnitSuite with Matchers {
 
   def initGame(player1Id: String, player2Id: String) = {
     val response = Unirest.post(baseUrl)
-      .queryString("player1Id", "1")
-      .queryString("player2Id", "2")
+      .queryString("player1Id", player1Id)
+      .queryString("player2Id", player2Id)
       .asString()
 
     if(response.getStatus != Status.OK.getStatusCode) {
@@ -52,6 +52,7 @@ class NoughtsTest extends JUnitSuite with Matchers {
     })
   }
 
+
   def getState(gameId: String) = {
     val response = Unirest.get(s"$baseUrl/$gameId").asString()
 
@@ -64,37 +65,55 @@ class NoughtsTest extends JUnitSuite with Matchers {
 
 	@Test
 	def testPlayer1Win {
-    val gameId = initGame("1", "2")
+    val gameId = initGame("7", "8")
     runMoves(gameId, Seq(
-      Move("1", 0, 0),
-      Move("2", 1, 0),
-      Move("1", 0, 1),
-      Move("2", 1, 1),
-      Move("1", 0, 2)))
+      Move("7", 0, 0),
+      Move("8", 1, 0),
+      Move("7", 0, 1),
+      Move("8", 1, 1),
+      Move("7", 0, 2)))
 
-    getState(gameId) should be (GameState(Some("1"), true))
+    getState(gameId) should be (GameState(Some("7"), true))
 
 	}
 
 	@Test
 	def testPlayer2Win {
-    val gameId = initGame("1", "2")
+    val gameId = initGame("3", "4")
     runMoves(gameId, Seq(
-      Move("1", 0, 0),
-      Move("2", 1, 0),
-      Move("1", 0, 1),
-      Move("2", 1, 1),
-      Move("1", 2, 2),
-      Move("2", 1, 2)))
+      Move("3", 0, 0),
+      Move("4", 1, 0),
+      Move("3", 0, 1),
+      Move("4", 1, 1),
+      Move("3", 2, 2),
+      Move("4", 1, 2)))
 
-    getState(gameId) should be (GameState(Some("2"), true))
+    getState(gameId) should be (GameState(Some("4"), true))
 
 	}
 
 
-  // Aplayer cant start a game with soomeone the have a game in progress with
   @Test
-  def testNewGame {
+  def testPlayerDraw {
+    val gameId = initGame("5", "6")
+    runMoves(gameId, Seq(
+      Move("5", 0, 0),
+      Move("6", 0, 1),
+      Move("5", 0, 2),
+      Move("6", 1, 0),
+      Move("5", 1, 2),
+      Move("6", 1, 1),
+      Move("5", 2, 0),
+      Move("6", 2, 2),
+      Move("5", 2, 1)))
+
+    getState(gameId) should be (GameState(None, true))
+
+  }
+
+
+  @Test
+  def testCantStartGameAgainstOpenOpponent {
     Unirest.post(baseUrl)
       .queryString("player1Id", "1")
       .queryString("player2Id", "2")

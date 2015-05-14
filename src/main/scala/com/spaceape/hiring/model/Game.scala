@@ -6,21 +6,21 @@ import scala.util.Random
 
 class Game(val player1: String, val player2: String) {
 
-	val id: String = Random.alphanumeric.take(2).mkString
+	val id: String = Random.alphanumeric.take(5).mkString
   var currentTurn = player1
+	var turns = 9
 
 	// There's definitely a better way to do this....
 	var board = Array(Array("0", "0", "0"), Array("0", "0", "0"), Array("0", "0", "0"))
 
 	// Pretty brute force way to go about pattern matching win conditions
-	private val winningCombos = List(List(0, 1, 2), List(3, 4, 5), List(6, 7, 8),  //Rows
-		List(0, 3, 6), List(1, 4, 7), List(2, 5, 8),                                 //Cols
-		List(0, 4, 8), List(2, 4, 6)                                                 //Diags
+	private val winningCombos = Set(Set(0, 1, 2), Set(3, 4, 5), Set(6, 7, 8),  //Rows
+		Set(0, 3, 6), Set(1, 4, 7), Set(2, 5, 8),                                 //Cols
+		Set(0, 4, 8), Set(2, 4, 6)                                                 //Diags
 	)
 
 
 	def getId: String = { id }
-
 
 	def getState: GameState = {
 		printBoard
@@ -29,7 +29,10 @@ class Game(val player1: String, val player2: String) {
 			case Some(player1) => return new GameState(Some(player1), true)
 			case None => checkForPlayerWin(player2) match {
 				case Some(player2) => return new GameState(Some(player2), true)
-				case None => return new GameState(None, false)
+				case None => turns match {
+					case 0 => new GameState(None, true)
+					case _ => new GameState(None, false)
+				}
 			}
 		}
 	}
@@ -43,17 +46,22 @@ class Game(val player1: String, val player2: String) {
 			if (value == player) marks += index
 		}
 
-		val playerResult = marks.toList
+		val playerResult = marks.toList.sortWith { _ < _ } .toSet
 		println(playerResult)
 
-		if (winningCombos.contains(playerResult))
-			Some(player)
-		else
-			None
+		// playerResult once sorted should be a superset of one of the
+		// winning combos
+		winningCombos.find {
+			_.subsetOf(playerResult)
+		} match {
+			case Some(c) => Some(player)
+			case _       => None
+		}
 	}
 
 
 	def applyMove(move: Move): Boolean = {
+
 		if (isMoveValid(move)) {
 			System.out.println("Move valid")
 			updateBoard(move)
@@ -72,7 +80,7 @@ class Game(val player1: String, val player2: String) {
 
 
   private def isMoveValid(move: Move): Boolean = {
-    currentTurn == move.playerId && board(move.x)(move.y) == "0"
+		currentTurn == move.playerId && board(move.x)(move.y) == "0" && turns > 0
   }
 
 
@@ -80,6 +88,7 @@ class Game(val player1: String, val player2: String) {
 		if (currentTurn == player1) currentTurn = player2 else currentTurn = player1
 		System.out.println(s"currentTurn is now ${currentTurn}")
 		board(move.x)(move.y) = move.playerId
+		turns = turns - 1
 		true
 	}
 

@@ -59,7 +59,7 @@ class NoughtsResource() {
 
 					Response.ok(state).build
 				}
-				case None => Response.ok(new GameState(Some("1"), true)).build
+				case None => Response.status(Status.NOT_FOUND).build
 			}
 		}
 

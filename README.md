@@ -84,3 +84,32 @@ Candidate Comments
 ------------------
 
 Please add any assumptions or commentary on your implementation decisions here.
+
+The Dropwizard docs specify a recommended dir layout but it differed quite a bit from what was already here,
+so I didn't rearrange the project.
+
+I couldn't get the NoughtsTest class working using ScalaTest FlatSpec so I left it as a JUnit suite for 'integration'
+tests.  I did the GameSpec using FlatSpec.
+
+The bonus task I attemtped was the Extend the Tests task:
+Each player cannot place a mark where either player has placed one previously
+	GameSpec:: A Game should not allow a player to reuse a square that is in play
+
+A player cannot make moves out of turn
+	GameSpec::A Game should not allow a player to make consecutive moves
+
+The first player who places three consecutive marks...wins the game
+	NoughtsTest::testPlayer1Win
+	NoughtsTest::testPlayer1Win
+
+If all of the spaces are taken and no player has succeeded...the game is a draw
+	NoughtsTest::testPlayerDraw
+
+A player can't start a game against an opponent they have an open game with
+	NoughtsTest::testStartGameAgainstOpenOpponentReturns403
+
+Appropriate error code should be returned when an unknown game Id is supplied
+	NoughtsTest::testMakeMoveForUnknownIdReturns404
+	NoughtsTest::testGetGameForUnknownIdReturns404
+
+
